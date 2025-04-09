@@ -1,0 +1,44 @@
+#! /usr/bin/env bash
+
+log() {
+    dt=$(date +"%Y-%m-%d %H:%M:%S")
+    echo "[${dt}] $1"
+}
+
+check_scrcpy() {
+    if !command -v scrcpy > /dev/null 2>&1; then
+        log "scrcpy is not installed."
+        exit 1
+    fi
+}
+
+start_adb_server() {
+    log "Starting adb server"
+    adb start-server
+}
+
+start_scrcpy() {
+    notify-send "Device ${1} connected. Starting scrcpy..."
+    scrcpy 2>&1 > /dev/null
+}
+
+check_devices() {
+    log "Checking for devices..."
+    while true; do
+        devices=$(adb devices | grep -v "List of devices")
+        if [ -n "$devices" ]; then
+            log "Device ${devices} was connected"
+            log "Starting scrcpy"
+            start_scrcpy "$devices"
+        fi
+        sleep 1
+    done
+}
+
+main() {
+    check_scrcpy
+    start_adb_server
+    check_devices
+}
+
+main

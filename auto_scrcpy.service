@@ -1,0 +1,13 @@
+[Unit]
+Description=Scrcpy Service
+After=network.target
+
+[Service]
+ExecStart=%h/.local/bin/auto_scrcpy
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=scrcpy_service
+
+[Install]
+WantedBy=default.target
